@@ -1,0 +1,182 @@
+{% doc %}
+  @prompt
+    Add justified text alignment to the Description text block in the collection section (block ID: template--27046812418357__section__text_twGGkJ, section ID: template--27046812418357__section) on the Love in the City collection page. The text should be fully justified (text-align: justify) using custom CSS or a Liquid theme block override.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-justified-text-{{ ai_gen_id }} {
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px {{ block.settings.padding_horizontal }}px;
+    display: block;
+  }
+
+  .ai-justified-text__content-{{ ai_gen_id }} {
+    text-align: justify;
+    text-align-last: {{ block.settings.text_align_last }};
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: {{ block.settings.line_height }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-justified-text__content-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<justified-text-block-{{ ai_gen_id }}
+  class="ai-justified-text-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.text != blank %}
+    <div class="ai-justified-text__content-{{ ai_gen_id }}">
+      {{ block.settings.text }}
+    </div>
+  {% else %}
+    <div class="ai-justified-text__content-{{ ai_gen_id }}" style="color: #999; font-style: italic;">
+      Add your text content here
+    </div>
+  {% endif %}
+</justified-text-block-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class JustifiedTextBlock{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.style.display = 'block';
+      }
+    }
+
+    customElements.define('justified-text-block-{{ ai_gen_id }}', JustifiedTextBlock{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Justified text",
+  "tag": null,
+  "class": "justified-text-block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>This text will be fully justified, creating clean, aligned edges on both the left and right sides. Justified text is often used in formal documents, magazines, and newspapers to create a polished, professional appearance.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "select",
+      "id": "text_align_last",
+      "label": "Last line alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "left",
+      "info": "Controls how the last line of each paragraph is aligned"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#110811"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Justified text"
+    }
+  ]
+}
+{% endschema %}
