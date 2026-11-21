@@ -1,12 +1,74 @@
 
 
-<rte-formatter>
+<rte-formatter
+  class="page-content"
+  style="
+    --page-content-max-width: var(--max-width--body-{{ block.settings.max_width }}, none);
+    {% if block.settings.font_size != blank %}
+      --page-content-font-size: {{ block.settings.font_size }};
+    {% endif %}
+  "
+>
   {{ page.content }}
 </rte-formatter>
+
+{% stylesheet %}
+  .page-content {
+    display: block;
+    font-size: var(--page-content-font-size, inherit);
+    max-inline-size: var(--page-content-max-width);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:names.page_content",
-  "class": "rte"
+  "class": "rte",
+  "settings": [
+    {
+      "type": "select",
+      "id": "max_width",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "narrow",
+          "label": "t:options.narrow"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        }
+      ],
+      "default": ""
+    }
+  ]
 }
 {% endschema %}
