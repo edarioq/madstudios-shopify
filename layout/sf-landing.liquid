@@ -1,0 +1,82 @@
+{%- comment -%}
+  Series landing pages layout (MAD Studios).
+  Used only by templates/page.sf-piece.json and templates/page.sf-series.json.
+  Her store's normal header, footer and menus do not load on these pages.
+{%- endcomment -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ECEAE6">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <title>{{ page_title }}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- liquid
+      assign og_image = blank
+      if template.suffix == 'sf-piece'
+        assign sf_product = page.metafields.sf.product.value
+        if sf_product.featured_image
+          assign og_image = sf_product.featured_image
+        endif
+      endif
+    -%}
+    <meta property="og:site_name" content="{{ shop.name | escape }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title | escape }}">
+    <meta property="og:type" content="website">
+    {%- if page_description -%}
+      <meta property="og:description" content="{{ page_description | escape }}">
+    {%- endif -%}
+    {%- if og_image != blank -%}
+      <meta property="og:image" content="https:{{ og_image | image_url: width: 1200 }}">
+      <meta property="og:image:width" content="1200">
+      <meta property="og:image:height" content="{{ 1200 | divided_by: og_image.aspect_ratio | round }}">
+    {%- endif -%}
+    <meta name="twitter:card" content="summary_large_image">
+
+    {{ 'sf-syne-800.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}
+    {{ 'sf-inter-400.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}
+    <style>
+      @font-face { font-family: "SF Syne"; font-weight: 700; font-style: normal; font-display: swap; src: url("{{ 'sf-syne-700.woff2' | asset_url }}") format("woff2"); }
+      @font-face { font-family: "SF Syne"; font-weight: 800; font-style: normal; font-display: swap; src: url("{{ 'sf-syne-800.woff2' | asset_url }}") format("woff2"); }
+      @font-face { font-family: "SF Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("{{ 'sf-inter-400.woff2' | asset_url }}") format("woff2"); }
+      @font-face { font-family: "SF Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("{{ 'sf-inter-500.woff2' | asset_url }}") format("woff2"); }
+      @font-face { font-family: "SF Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("{{ 'sf-inter-600.woff2' | asset_url }}") format("woff2"); }
+    </style>
+    {{ 'sf-landing.css' | asset_url | stylesheet_tag }}
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="sf-body">
+    <a class="sf-skip" href="#sf-main">Skip to content</a>
+
+    {% section 'sf-header' %}
+
+    <main id="sf-main" tabindex="-1">
+      {{ content_for_layout }}
+
+      {%- comment -%}
+        Shared sections. The series page shows the works before the form;
+        piece pages show the form before the rest of the series.
+      {%- endcomment -%}
+      {%- if template.suffix == 'sf-series' -%}
+        {% section 'sf-series-grid' %}
+        {% section 'sf-event' %}
+      {%- else -%}
+        {% section 'sf-event' %}
+        {% section 'sf-series-grid' %}
+      {%- endif -%}
+    </main>
+
+    {% section 'sf-footer' %}
+
+    <script src="{{ 'sf-landing.js' | asset_url }}" defer></script>
+  </body>
+</html>
