@@ -1,0 +1,64 @@
+{%- comment -%}
+  Series page intro. Used by templates/page.sf-series.json.
+  Title = the page title. Statement = the page content.
+{%- endcomment -%}
+{%- liquid
+  assign series_menu = linklists['series-pieces']
+  assign piece_total = 0
+  for link in series_menu.links
+    if link.type == 'page_link'
+      assign piece_total = piece_total | plus: 1
+    endif
+  endfor
+-%}
+<section class="sf-wrap sf-intro" aria-labelledby="sf-series-title">
+  <div class="sf-intro__left">
+    {%- if section.settings.kicker != blank -%}
+      <span class="sf-kicker">{{ section.settings.kicker | escape }}</span>
+    {%- endif -%}
+    <h1 class="sf-intro__title" id="sf-series-title">{{ page.title | escape }}</h1>
+  </div>
+  <div class="sf-intro__right">
+    {%- if page.content != blank -%}
+      <div class="sf-rte sf-intro__statement">{{ page.content }}</div>
+    {%- endif -%}
+    <div class="sf-meta">
+      {%- if piece_total > 0 -%}<span>{{ piece_total }} original works</span>{%- endif -%}
+      {%- if section.settings.meta_1 != blank -%}<span>{{ section.settings.meta_1 | escape }}</span>{%- endif -%}
+      {%- if section.settings.meta_2 != blank -%}<span>{{ section.settings.meta_2 | escape }}</span>{%- endif -%}
+    </div>
+    <a class="sf-jump" href="#sf-event">{{ section.settings.jump_text | escape }} &darr;</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Series intro",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Small line above the title",
+      "default": "A series by Melissa Quintero"
+    },
+    {
+      "type": "text",
+      "id": "meta_1",
+      "label": "Detail 1",
+      "default": "Acrylic & concrete on canvas"
+    },
+    {
+      "type": "text",
+      "id": "meta_2",
+      "label": "Detail 2",
+      "default": "2026"
+    },
+    {
+      "type": "text",
+      "id": "jump_text",
+      "label": "Link to event form",
+      "default": "Be first in the room for the live-painting night"
+    }
+  ]
+}
+{% endschema %}
