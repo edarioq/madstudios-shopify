@@ -1,0 +1,250 @@
+{%- comment -%}
+  Piece landing page (one per artwork). Used by templates/page.sf-piece.json.
+
+  Data sources:
+  - Page title ............ piece title
+  - Page content .......... "About the piece" text
+  - page.metafields.sf.* .. product, song, artist, streaming links, size, note, closing line
+  - Linked product ........ photo, price, "Collect this piece" link
+  - Menu "series-pieces" .. piece number (No. 03 / 08)
+{%- endcomment -%}
+{%- liquid
+  assign sf = page.metafields.sf
+  assign product = sf.product.value
+  assign series_menu = linklists['series-pieces']
+  assign series_page = section.settings.series_page
+
+  assign piece_number = ''
+  assign piece_total = 0
+  for link in series_menu.links
+    if link.type == 'page_link'
+      assign piece_total = piece_total | plus: 1
+      if link.object.id == page.id
+        assign piece_number = piece_total | prepend: '0' | slice: -2, 2
+      endif
+    endif
+  endfor
+  assign piece_total_label = piece_total | prepend: '0' | slice: -2, 2
+
+  assign series_title = section.settings.series_title_override
+  if series_title == blank and series_page != blank
+    assign series_title = series_page.title
+  endif
+
+  assign spotify_url = sf.spotify_url.value
+  assign apple_url = sf.apple_music_url.value
+
+  assign art_alt = page.title
+  if product.featured_image.alt != blank
+    assign art_alt = product.featured_image.alt
+  endif
+-%}
+
+<section class="sf-wrap sf-hero" aria-labelledby="sf-piece-title">
+  <div class="sf-art{% unless product.featured_image %} sf-art--empty{% endunless %}">
+    {%- if product.featured_image -%}
+      {{
+        product.featured_image
+        | image_url: width: 1400
+        | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          widths: '400, 700, 1000, 1400',
+          sizes: '(min-width: 900px) 560px, calc(100vw - 40px)',
+          alt: art_alt,
+          class: 'sf-art__img'
+      }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'sf-art__placeholder' }}
+    {%- endif -%}
+  </div>
+
+  <div class="sf-hero__info">
+    <div class="sf-eyebrow">
+      {%- if series_title != blank -%}
+        {%- if series_page != blank -%}
+          <a class="sf-series-link" href="{{ series_page.url }}">{{ series_title | escape }}</a>
+        {%- else -%}
+          <span class="sf-series-link">{{ series_title | escape }}</span>
+        {%- endif -%}
+      {%- endif -%}
+      {%- if piece_number != blank -%}
+        <span class="sf-count">No. {{ piece_number }} / {{ piece_total_label }}</span>
+      {%- endif -%}
+    </div>
+
+    <div>
+      <h1 class="sf-title" id="sf-piece-title">{{ page.title | escape }}</h1>
+      {%- if sf.song_title != blank -%}
+        <p class="sf-inspired">
+          Inspired by <b>{{ sf.song_title.value | escape }}</b>
+          {%- if sf.song_artist != blank %} &mdash; {{ sf.song_artist.value | escape }}{% endif -%}
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- if product != blank -%}
+      <div class="sf-buy">
+        <div>
+          <div class="sf-label">{{ section.settings.price_label | escape }}</div>
+          <div class="sf-price">{{ product.price | money }}</div>
+        </div>
+        <a class="sf-btn sf-btn--primary" href="{{ product.url }}">
+          {{ section.settings.collect_text | escape }}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        {%- if section.settings.checkout_note != blank -%}
+          <p class="sf-secure">{{ section.settings.checkout_note | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <dl class="sf-details">
+      <div><dt>Medium</dt><dd>{{ sf.medium.value | default: section.settings.medium | escape }}</dd></div>
+      <div><dt>Size</dt><dd>{{ sf.size.value | default: '—' | escape }}</dd></div>
+      <div><dt>Year</dt><dd>{{ sf.year.value | default: section.settings.year | escape }}</dd></div>
+      <div><dt>Edition</dt><dd>{{ section.settings.edition | escape }}</dd></div>
+    </dl>
+
+    <div class="sf-about">
+      <h2 class="sf-h-label">{{ section.settings.about_heading | escape }}</h2>
+      {%- if page.content != blank -%}
+        <div class="sf-rte">{{ page.content }}</div>
+      {%- endif -%}
+      {%- if sf.artist_note != blank -%}
+        <p class="sf-about__note">{{ sf.artist_note.value | escape | newline_to_br }}</p>
+      {%- endif -%}
+      {%- if sf.closing_line != blank -%}
+        <p class="sf-about__closer">{{ sf.closing_line.value | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if spotify_url != blank or apple_url != blank -%}
+      <div class="sf-listen">
+        <div class="sf-listen__row">
+          {%- if product.featured_image -%}
+            {{ product.featured_image | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'sf-listen__thumb', alt: '', loading: 'lazy', width: 44, height: 44 }}
+          {%- endif -%}
+          <div class="sf-listen__text">
+            <span class="sf-label">{{ section.settings.listen_heading | escape }}</span>
+            <span class="sf-listen__song">
+              {{- sf.song_title.value | escape -}}
+              {%- if sf.song_artist != blank %} &mdash; {{ sf.song_artist.value | escape }}{% endif -%}
+            </span>
+          </div>
+        </div>
+        <div class="sf-stream">
+          {%- if spotify_url != blank -%}
+            <a class="sf-btn sf-btn--outline" href="{{ spotify_url }}" target="_blank" rel="noopener noreferrer">
+              Spotify <span class="sf-visually-hidden">(opens in a new tab)</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if apple_url != blank -%}
+            <a class="sf-btn sf-btn--outline" href="{{ apple_url }}" target="_blank" rel="noopener noreferrer">
+              Apple Music <span class="sf-visually-hidden">(opens in a new tab)</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+        <p class="sf-disclaim">{{ section.settings.listen_disclaimer | escape }}</p>
+      </div>
+    {%- endif -%}
+
+    <a class="sf-jump" href="#sf-event">{{ section.settings.jump_text | escape }} &darr;</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Series piece",
+  "settings": [
+    {
+      "type": "page",
+      "id": "series_page",
+      "label": "Series page",
+      "info": "The \"Series Title\" label links here and uses its page title."
+    },
+    {
+      "type": "text",
+      "id": "series_title_override",
+      "label": "Series title (optional)",
+      "info": "Leave empty to use the series page's title."
+    },
+    {
+      "type": "header",
+      "content": "Purchase"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price label",
+      "default": "Purchase price"
+    },
+    {
+      "type": "text",
+      "id": "collect_text",
+      "label": "Button text",
+      "default": "Collect this piece"
+    },
+    {
+      "type": "text",
+      "id": "checkout_note",
+      "label": "Note under button",
+      "default": "Secure checkout on madstudios.me"
+    },
+    {
+      "type": "header",
+      "content": "Details shared by all pieces"
+    },
+    {
+      "type": "text",
+      "id": "medium",
+      "label": "Medium",
+      "default": "Acrylic & concrete on canvas",
+      "info": "A piece's own Medium field overrides this."
+    },
+    {
+      "type": "text",
+      "id": "year",
+      "label": "Year",
+      "default": "2026",
+      "info": "A piece's own Year field overrides this."
+    },
+    {
+      "type": "text",
+      "id": "edition",
+      "label": "Edition",
+      "default": "Original · 1 of 1"
+    },
+    {
+      "type": "text",
+      "id": "about_heading",
+      "label": "About heading",
+      "default": "About the piece"
+    },
+    {
+      "type": "header",
+      "content": "Song links"
+    },
+    {
+      "type": "text",
+      "id": "listen_heading",
+      "label": "Heading",
+      "default": "Hear the song behind the piece"
+    },
+    {
+      "type": "textarea",
+      "id": "listen_disclaimer",
+      "label": "Disclaimer",
+      "default": "Opens in the streaming service. The song is referenced as inspiration only; MAD Studios is not affiliated with or endorsed by the artist or label."
+    },
+    {
+      "type": "text",
+      "id": "jump_text",
+      "label": "Link to event form",
+      "default": "Not ready to collect? Be first in the room for the live-painting night"
+    }
+  ]
+}
+{% endschema %}
