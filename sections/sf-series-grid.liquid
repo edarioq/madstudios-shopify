@@ -1,0 +1,100 @@
+{%- comment -%}
+  Shared series grid. Reads the "series-pieces" menu (Online Store > Navigation).
+  Piece pages: shows the other works. Series page: shows all works.
+{%- endcomment -%}
+{%- liquid
+  assign series_menu = linklists['series-pieces']
+  assign is_series_page = false
+  if template.suffix == 'sf-series'
+    assign is_series_page = true
+  endif
+
+  assign shown = 0
+  for link in series_menu.links
+    if link.type == 'page_link'
+      unless link.object.id == page.id
+        assign shown = shown | plus: 1
+      endunless
+    endif
+  endfor
+-%}
+{%- if shown > 0 -%}
+  <section class="sf-rest" id="sf-series-grid" aria-labelledby="sf-grid-title">
+    <div class="sf-wrap sf-rest__inner">
+      <div class="sf-rest__head">
+        <h2 class="sf-h-label" id="sf-grid-title">
+          {%- if is_series_page -%}
+            {{ section.settings.heading_series | escape }}
+          {%- else -%}
+            {{ section.settings.heading_piece | escape }}
+          {%- endif -%}
+        </h2>
+        <span class="sf-rest__count">{{ shown }} works</span>
+      </div>
+      <ul class="sf-grid" role="list">
+        {%- assign position = 0 -%}
+        {%- for link in series_menu.links -%}
+          {%- if link.type == 'page_link' -%}
+            {%- assign position = position | plus: 1 -%}
+            {%- unless link.object.id == page.id -%}
+              {%- liquid
+                assign piece_page = link.object
+                assign piece_product = piece_page.metafields.sf.product.value
+                assign number = position | prepend: '0' | slice: -2, 2
+              -%}
+              <li>
+                <a class="sf-tile" href="{{ piece_page.url }}">
+                  <span class="sf-tile__art">
+                    {%- if piece_product.featured_image -%}
+                      {{
+                        piece_product.featured_image
+                        | image_url: width: 700
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '300, 450, 700',
+                          sizes: '(min-width: 900px) 280px, calc(50vw - 26px)',
+                          alt: '',
+                          class: 'sf-tile__img'
+                      }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'sf-art__placeholder' }}
+                    {%- endif -%}
+                    <span class="sf-tile__num">No. {{ number }}</span>
+                  </span>
+                  <span class="sf-tile__title">{{ piece_page.title | escape }}</span>
+                  {%- if piece_page.metafields.sf.song_title != blank -%}
+                    <span class="sf-tile__song">Inspired by {{ piece_page.metafields.sf.song_title.value | escape }}</span>
+                  {%- endif -%}
+                </a>
+              </li>
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Series grid",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Pieces and their order come from the menu with the handle series-pieces (Online Store > Navigation)."
+    },
+    {
+      "type": "text",
+      "id": "heading_piece",
+      "label": "Heading on piece pages",
+      "default": "Explore the rest of the series"
+    },
+    {
+      "type": "text",
+      "id": "heading_series",
+      "label": "Heading on the series page",
+      "default": "The works"
+    }
+  ]
+}
+{% endschema %}
