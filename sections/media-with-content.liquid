@@ -168,6 +168,11 @@
 
     /* Inner blocks spacing */
     .media-with-content__content > .group-block-content {
+      /* The h1 size scales with the viewport, but this column is only part of it. Cap it by the
+         column width so long words like "Transform" shrink instead of breaking mid-word on tablets. */
+      --font-h1--size: min(var(--font-size--h1), 20cqi);
+
+      container-type: inline-size;
       padding-inline: var(--page-margin);
       padding-block: calc(2 * var(--page-margin));
 
