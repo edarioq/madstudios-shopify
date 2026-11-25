@@ -1,0 +1,84 @@
+{%- comment -%}
+  Shared footer for all 9 series landing pages.
+  Policy links appear automatically when the policy exists in Settings > Policies.
+{%- endcomment -%}
+<footer class="sf-footer">
+  <div class="sf-wrap sf-footer__inner">
+    <div class="sf-footer__col">
+      <span class="sf-wordmark sf-wordmark--small">{{ section.settings.wordmark_text | default: shop.name | escape }}</span>
+      {%- if section.settings.bio != blank -%}
+        <div class="sf-footer__bio">{{ section.settings.bio }}</div>
+      {%- endif -%}
+      <span class="sf-copy">&copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}</span>
+    </div>
+    <div class="sf-footer__col">
+      <ul class="sf-links" role="list">
+        <li><a href="{{ routes.root_url }}">{{ section.settings.store_link_text | escape }}</a></li>
+        {%- if section.settings.instagram_url != blank -%}
+          <li><a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        {%- endif -%}
+        {%- if section.settings.contact_page != blank -%}
+          <li><a href="{{ section.settings.contact_page.url }}">Contact</a></li>
+        {%- endif -%}
+      </ul>
+      <ul class="sf-policies" role="list">
+        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">Privacy Policy</a></li>{%- endif -%}
+        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">Terms</a></li>{%- endif -%}
+        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">Shipping</a></li>{%- endif -%}
+        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">Returns</a></li>{%- endif -%}
+        {%- if section.settings.accessibility_page != blank -%}<li><a href="{{ section.settings.accessibility_page.url }}">Accessibility</a></li>{%- endif -%}
+      </ul>
+      {%- if section.settings.legal != blank -%}
+        <p class="sf-legal">{{ section.settings.legal | escape }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Series footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "wordmark_text",
+      "label": "Wordmark text",
+      "default": "MAD STUDIOS"
+    },
+    {
+      "type": "richtext",
+      "id": "bio",
+      "label": "Artist bio",
+      "default": "<p>Melissa Quintero is a Colombian contemporary artist in Miami. Trained as an architect, she works in acrylic and concrete, structure and color, to explore love, grief, faith and growth.</p>"
+    },
+    {
+      "type": "text",
+      "id": "store_link_text",
+      "label": "Store link text",
+      "default": "madstudios.me"
+    },
+    {
+      "type": "text",
+      "id": "instagram_url",
+      "label": "Instagram URL",
+      "default": "https://www.instagram.com/madstudios.me/"
+    },
+    {
+      "type": "page",
+      "id": "contact_page",
+      "label": "Contact page"
+    },
+    {
+      "type": "page",
+      "id": "accessibility_page",
+      "label": "Accessibility page (optional)"
+    },
+    {
+      "type": "textarea",
+      "id": "legal",
+      "label": "Music disclaimer",
+      "default": "Song titles and artist names are referenced as the inspiration for original artworks. No affiliation with or endorsement by any artist, label, Spotify or Apple is implied. Spotify and Apple Music are trademarks of their respective owners."
+    }
+  ]
+}
+{% endschema %}
