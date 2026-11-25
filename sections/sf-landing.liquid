@@ -1,0 +1,63 @@
+{%- comment -%}
+  Shared header for all 9 series landing pages.
+  Edit "Line 1" and "Line 2" in the theme editor after the show (no code).
+{%- endcomment -%}
+<header class="sf-header">
+  <div class="sf-wrap sf-header__inner">
+    <a class="sf-wordmark" href="{{ section.settings.home_link | default: routes.root_url }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 400 | image_tag: class: 'sf-wordmark__img', alt: shop.name, height: 28, loading: 'eager' }}
+      {%- else -%}
+        {{ section.settings.wordmark_text | default: shop.name | escape }}
+      {%- endif -%}
+    </a>
+    <div class="sf-header__event">
+      {%- if section.settings.line_1 != blank -%}<span class="sf-header__line1">{{ section.settings.line_1 | escape }}</span>{%- endif -%}
+      {%- if section.settings.line_2 != blank -%}<span class="sf-header__line2">{{ section.settings.line_2 | escape }}</span>{%- endif -%}
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Series header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo (optional)",
+      "info": "Leave empty to show the text wordmark."
+    },
+    {
+      "type": "text",
+      "id": "wordmark_text",
+      "label": "Wordmark text",
+      "default": "MAD STUDIOS"
+    },
+    {
+      "type": "url",
+      "id": "home_link",
+      "label": "Wordmark link",
+      "info": "Leave empty to link to the store home page."
+    },
+    {
+      "type": "header",
+      "content": "Event line"
+    },
+    {
+      "type": "text",
+      "id": "line_1",
+      "label": "Line 1",
+      "default": "Red Dot Miami",
+      "info": "After the show: Red Dot Miami 2026"
+    },
+    {
+      "type": "text",
+      "id": "line_2",
+      "label": "Line 2",
+      "default": "Art Basel Week · Booth [#]",
+      "info": "After the show: Exhibited during Art Basel Week"
+    }
+  ]
+}
+{% endschema %}
