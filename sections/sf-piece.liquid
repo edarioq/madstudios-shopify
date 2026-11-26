@@ -4,13 +4,13 @@
   Data sources:
   - Page title ............ piece title
   - Page content .......... "About the piece" text
-  - page.metafields.sf.* .. product, song, artist, streaming links, size, note, closing line
+  - page.metafields.custom.sf_* .. product, song, artist, streaming links, size, note, closing line
   - Linked product ........ photo, price, "Collect this piece" link
   - Menu "series-pieces" .. piece number (No. 03 / 08)
 {%- endcomment -%}
 {%- liquid
-  assign sf = page.metafields.sf
-  assign product = sf.product.value
+  assign sf = page.metafields.custom
+  assign product = sf.sf_linked_product.value
   assign series_menu = linklists['series-pieces']
   assign series_page = section.settings.series_page
 
@@ -31,8 +31,8 @@
     assign series_title = series_page.title
   endif
 
-  assign spotify_url = sf.spotify_url.value
-  assign apple_url = sf.apple_music_url.value
+  assign spotify_url = sf.sf_spotify_url.value
+  assign apple_url = sf.sf_apple_music_url.value
 
   assign art_alt = page.title
   if product.featured_image.alt != blank
@@ -75,10 +75,10 @@
 
     <div>
       <h1 class="sf-title" id="sf-piece-title">{{ page.title | escape }}</h1>
-      {%- if sf.song_title != blank -%}
+      {%- if sf.sf_song_title != blank -%}
         <p class="sf-inspired">
-          Inspired by <b>{{ sf.song_title.value | escape }}</b>
-          {%- if sf.song_artist != blank %} &mdash; {{ sf.song_artist.value | escape }}{% endif -%}
+          Inspired by <b>{{ sf.sf_song_title.value | escape }}</b>
+          {%- if sf.sf_song_artist != blank %} &mdash; {{ sf.sf_song_artist.value | escape }}{% endif -%}
         </p>
       {%- endif -%}
     </div>
@@ -100,9 +100,9 @@
     {%- endif -%}
 
     <dl class="sf-details">
-      <div><dt>Medium</dt><dd>{{ sf.medium.value | default: section.settings.medium | escape }}</dd></div>
-      <div><dt>Size</dt><dd>{{ sf.size.value | default: '—' | escape }}</dd></div>
-      <div><dt>Year</dt><dd>{{ sf.year.value | default: section.settings.year | escape }}</dd></div>
+      <div><dt>Medium</dt><dd>{{ sf.sf_medium.value | default: section.settings.medium | escape }}</dd></div>
+      <div><dt>Size</dt><dd>{{ sf.sf_size.value | default: '—' | escape }}</dd></div>
+      <div><dt>Year</dt><dd>{{ sf.sf_year.value | default: section.settings.year | escape }}</dd></div>
       <div><dt>Edition</dt><dd>{{ section.settings.edition | escape }}</dd></div>
     </dl>
 
@@ -111,11 +111,11 @@
       {%- if page.content != blank -%}
         <div class="sf-rte">{{ page.content }}</div>
       {%- endif -%}
-      {%- if sf.artist_note != blank -%}
-        <p class="sf-about__note">{{ sf.artist_note.value | escape | newline_to_br }}</p>
+      {%- if sf.sf_artist_note != blank -%}
+        <p class="sf-about__note">{{ sf.sf_artist_note.value | escape | newline_to_br }}</p>
       {%- endif -%}
-      {%- if sf.closing_line != blank -%}
-        <p class="sf-about__closer">{{ sf.closing_line.value | escape }}</p>
+      {%- if sf.sf_closing_line != blank -%}
+        <p class="sf-about__closer">{{ sf.sf_closing_line.value | escape }}</p>
       {%- endif -%}
     </div>
 
@@ -128,8 +128,8 @@
           <div class="sf-listen__text">
             <span class="sf-label">{{ section.settings.listen_heading | escape }}</span>
             <span class="sf-listen__song">
-              {{- sf.song_title.value | escape -}}
-              {%- if sf.song_artist != blank %} &mdash; {{ sf.song_artist.value | escape }}{% endif -%}
+              {{- sf.sf_song_title.value | escape -}}
+              {%- if sf.sf_song_artist != blank %} &mdash; {{ sf.sf_song_artist.value | escape }}{% endif -%}
             </span>
           </div>
         </div>
