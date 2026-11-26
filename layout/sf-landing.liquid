@@ -20,7 +20,7 @@
     {%- liquid
       assign og_image = blank
       if template.suffix == 'sf-piece'
-        assign sf_product = page.metafields.sf.product.value
+        assign sf_product = page.metafields.custom.sf_linked_product.value
         if sf_product.featured_image
           assign og_image = sf_product.featured_image
         endif
