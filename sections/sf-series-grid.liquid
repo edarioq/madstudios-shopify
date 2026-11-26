@@ -39,7 +39,7 @@
             {%- unless link.object.id == page.id -%}
               {%- liquid
                 assign piece_page = link.object
-                assign piece_product = piece_page.metafields.sf.product.value
+                assign piece_product = piece_page.metafields.custom.sf_linked_product.value
                 assign number = position | prepend: '0' | slice: -2, 2
               -%}
               <li>
@@ -62,8 +62,8 @@
                     <span class="sf-tile__num">No. {{ number }}</span>
                   </span>
                   <span class="sf-tile__title">{{ piece_page.title | escape }}</span>
-                  {%- if piece_page.metafields.sf.song_title != blank -%}
-                    <span class="sf-tile__song">Inspired by {{ piece_page.metafields.sf.song_title.value | escape }}</span>
+                  {%- if piece_page.metafields.custom.sf_song_title != blank -%}
+                    <span class="sf-tile__song">Inspired by {{ piece_page.metafields.custom.sf_song_title.value | escape }}</span>
                   {%- endif -%}
                 </a>
               </li>
