@@ -187,7 +187,7 @@ a.sf-series-link:hover { text-decoration: underline; }
   .sf-listen .sf-disclaim { grid-column: 1 / -1; }
   .sf-stream { display: flex; }
 
-  .sf-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; padding-top: 72px; padding-bottom: 16px; align-items: end; }
+  .sf-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; padding-top: 72px; padding-bottom: 16px; align-items: start; }
   .sf-intro__title { font-size: 64px; line-height: 0.95; }
   .sf-intro__statement { font-size: 18px; }
 
