@@ -213,3 +213,4 @@ a.sf-series-link:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
 }
+.sf-tile__num { display: none; }
